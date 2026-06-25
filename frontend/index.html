@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Estadísticas de Ventas</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       PANTALLA DE LOGIN
+  ════════════════════════════════════════════ -->
+  <div id="login-screen">
+  <div class="login-bg-dots">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Grid de puntos -->
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.08)"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)"/>
+
+      <!-- Barras de gráfico animadas -->
+      <rect class="login-bg-bar" x="80"  y="700" width="30" height="120" rx="4" fill="#4f46e5" opacity="0.2" style="animation-delay:0s; animation-duration:7s"/>
+      <rect class="login-bg-bar" x="120" y="650" width="30" height="170" rx="4" fill="#818cf8" opacity="0.2" style="animation-delay:1s; animation-duration:8s"/>
+      <rect class="login-bg-bar" x="160" y="680" width="30" height="140" rx="4" fill="#4f46e5" opacity="0.2" style="animation-delay:2s; animation-duration:6s"/>
+      <rect class="login-bg-bar" x="200" y="620" width="30" height="200" rx="4" fill="#6366f1" opacity="0.2" style="animation-delay:0.5s; animation-duration:9s"/>
+      <rect class="login-bg-bar" x="240" y="660" width="30" height="160" rx="4" fill="#818cf8" opacity="0.2" style="animation-delay:1.5s; animation-duration:7s"/>
+
+      <rect class="login-bg-bar" x="1150" y="700" width="30" height="120" rx="4" fill="#4f46e5" opacity="0.2" style="animation-delay:2s; animation-duration:8s"/>
+      <rect class="login-bg-bar" x="1190" y="640" width="30" height="180" rx="4" fill="#818cf8" opacity="0.2" style="animation-delay:0s; animation-duration:6s"/>
+      <rect class="login-bg-bar" x="1230" y="670" width="30" height="150" rx="4" fill="#6366f1" opacity="0.2" style="animation-delay:1s; animation-duration:9s"/>
+      <rect class="login-bg-bar" x="1270" y="610" width="30" height="210" rx="4" fill="#4f46e5" opacity="0.2" style="animation-delay:3s; animation-duration:7s"/>
+      <rect class="login-bg-bar" x="1310" y="655" width="30" height="165" rx="4" fill="#818cf8" opacity="0.2" style="animation-delay:1.5s; animation-duration:8s"/>
+
+      <!-- Líneas de tendencia -->
+      <polyline class="login-bg-line" points="0,600 120,520 280,560 420,480 580,510 720,430 880,460 1040,380 1200,420 1440,350"
+        fill="none" stroke="#818cf8" stroke-width="2" opacity="0.3"/>
+      <polyline class="login-bg-line" points="0,700 150,650 300,670 450,610 600,640 750,580 900,600 1050,540 1200,560 1440,500"
+        fill="none" stroke="#4f46e5" stroke-width="2" opacity="0.2" style="animation-delay:2s"/>
+
+      <!-- Círculos decorativos -->
+      <circle class="login-bg-circle" cx="200"  cy="200" r="120" fill="none" stroke="#4f46e5" stroke-width="1.5" opacity="0.15" style="animation-delay:0s"/>
+      <circle class="login-bg-circle" cx="1250" cy="150" r="90"  fill="none" stroke="#818cf8" stroke-width="1.5" opacity="0.15" style="animation-delay:1s"/>
+      <circle class="login-bg-circle" cx="100"  cy="400" r="60"  fill="#4f46e5" opacity="0.07" style="animation-delay:2s"/>
+      <circle class="login-bg-circle" cx="1350" cy="400" r="80"  fill="#6366f1" opacity="0.07" style="animation-delay:0.5s"/>
+
+      <!-- Puntos de datos -->
+      <circle cx="120" cy="520" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="280" cy="560" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="420" cy="480" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="580" cy="510" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="720" cy="430" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="880" cy="460" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="1040" cy="380" r="5" fill="#818cf8" opacity="0.5"/>
+      <circle cx="1200" cy="420" r="5" fill="#818cf8" opacity="0.5"/>
+
+      <!-- Hexágonos decorativos -->
+      <polygon points="1380,80 1410,63 1440,80 1440,114 1410,131 1380,114" fill="none" stroke="#4f46e5" stroke-width="1" opacity="0.2"/>
+      <polygon points="50,100 80,83 110,100 110,134 80,151 50,134"         fill="none" stroke="#818cf8" stroke-width="1" opacity="0.2"/>
+      <polygon points="700,30 730,13 760,30 760,64 730,81 700,64"          fill="none" stroke="#6366f1" stroke-width="1" opacity="0.15"/>
+    </svg>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">📊</div>
+      <h1>Sistema de Ventas</h1>
+      <p>Ingresá tus credenciales para continuar</p>
+    </div>
+    <div class="login-divider"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" placeholder="Tu usuario" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-password-wrap">
+          <input type="password" id="password" placeholder="Tu contraseña" autocomplete="new-password" />
+          <button type="button" class="btn-toggle-pwd" id="btn-toggle-pwd" title="Mostrar contraseña">👁</button>
+        </div>
+      </div>
+      <div id="login-error" class="login-error hidden">Usuario o contraseña incorrectos</div>
+      <button type="submit" class="btn-login" id="btn-login">Ingresar</button>
+    </form>
+    <p class="login-footer">🐶🐱☕ Karen Gomez</p>
+  </div>
+</div>
+
+  <!-- ═══════════════════════════════════════════
+       APP PRINCIPAL (oculta hasta hacer login)
+  ════════════════════════════════════════════ -->
+  <div id="app" class="hidden">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-logo">📊</span>
+        <span class="sidebar-title">SistemaVentas</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">PRINCIPAL</div>
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">🏠</span> Dashboard
+        </a>
+        <a href="#" class="nav-item" data-page="agenda">
+          <span class="nav-icon">📅</span> Agenda
+        </a>
+
+        <div class="nav-section-label">GESTIÓN</div>
+        <a href="#" class="nav-item" data-page="comercial">
+          <span class="nav-icon">💼</span> Comercial
+        </a>
+        <a href="#" class="nav-item" data-page="clientes">
+          <span class="nav-icon">👥</span> Clientes
+        </a>
+        <a href="#" class="nav-item" data-page="zonas">
+          <span class="nav-icon">🗺️</span> Zonas
+        </a>
+        <a href="#" class="nav-item" data-page="planes">
+          <span class="nav-icon">📋</span> Planes
+        </a>
+        <a href="#" class="nav-item" data-page="promociones">
+          <span class="nav-icon">🏷️</span> Promociones
+        </a>
+
+        <div class="nav-section-label">SEGUIMIENTO</div>
+        <a href="#" class="nav-item" data-page="postventa">
+          <span class="nav-icon">🔧</span> Postventa
+        </a>
+        <a href="#" class="nav-item" data-page="reportes">
+          <span class="nav-icon">📈</span> Reportes
+        </a>
+        <a href="#" class="nav-item" data-page="bajas">
+          <span class="nav-icon">📉</span> Bajas
+        </a>
+        <a href="#" class="nav-item" data-page="comparador">
+          <span class="nav-icon">🔀</span> Comparador
+        </a>
+
+        <div class="nav-section-label">SISTEMA</div>
+        <a href="#" class="nav-item" data-page="administracion">
+          <span class="nav-icon">⚙️</span> Administración
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <span class="user-avatar" id="user-avatar">A</span>
+          <div class="user-details">
+            <span class="user-name" id="user-name">Admin</span>
+            <span class="user-role" id="user-role">Administrador</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Cerrar sesión">⏏</button>
+      </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content" id="main-content">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-menu-toggle" id="btn-menu-toggle">☰</button>
+          <h2 class="page-title" id="page-title">Dashboard</h2>
+        </div>
+        <div class="topbar-right" style="display:flex; align-items:center; gap:12px;">
+          <button class="btn-dark-toggle" id="btn-dark-toggle" title="Cambiar tema">
+            <svg id="icon-dark" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg id="icon-light" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+          <span class="topbar-date" id="topbar-date"></span>
+        </div>
+      </header>
+
+      <!-- Páginas -->
+      <div class="page-content">
+
+        <!-- DASHBOARD -->
+        <section id="page-dashboard" class="page active">
+          <div class="section-header">
+            <h3>Resumen Ejecutivo</h3>
+            <p>Cargá un archivo Excel para ver los datos</p>
+          </div>
+
+          <!-- Upload rápido -->
+          <div class="upload-bar" id="upload-bar">
+            <span>📂 Cargar archivo Excel</span>
+            <input type="file" id="file-input" accept=".xlsx,.xls,.csv" />
+            <button class="btn-primary" id="btn-upload">Cargar archivo</button>
+            <span class="upload-status" id="upload-status"></span>
+          </div>
+
+          <!-- Selector de hoja (oculto hasta cargar) -->
+          <div id="sheet-selector" class="hidden">
+            <label>Hoja:</label>
+            <select id="sheet-select"></select>
+            <button class="btn-secondary" id="btn-load-columns">Seleccionar hoja</button>
+          </div>
+
+          <!-- Mapeo de columnas (oculto hasta elegir hoja) -->
+          <div id="column-mapper" class="hidden card">
+            <h4>Mapear columnas</h4>
+            <div class="mapper-grid">
+              <div class="form-group">
+                <label>Fecha *</label>
+                <select id="col-fecha"></select>
+              </div>
+              <div class="form-group">
+                <label>Tipo de trabajo *</label>
+                <select id="col-tipo"></select>
+              </div>
+              <div class="form-group">
+                <label>Zona</label>
+                <select id="col-zona"><option value="">— opcional —</option></select>
+              </div>
+              <div class="form-group">
+                <label>Vendedor</label>
+                <select id="col-vendedor"><option value="">— opcional —</option></select>
+              </div>
+              <div class="form-group">
+                <label>Promoción</label>
+                <select id="col-promo"><option value="">— opcional —</option></select>
+              </div>
+              <div class="form-group">
+                <label>Plan nuevo</label>
+                <select id="col-plan"><option value="">— opcional —</option></select>
+              </div>
+             
+            </div>
+            <button class="btn-primary" id="btn-analyze">Analizar datos</button>
+          </div>
+
+          <!-- Reporte de limpieza -->
+          <div id="cleaning-report" class="hidden">
+            <div class="report-bar">
+              <span class="report-item">📋 Total filas: <strong id="rep-total">—</strong></span>
+              <span class="report-item report-ok">✔ Válidas: <strong id="rep-valid">—</strong></span>
+              <span class="report-item report-warn">⚠ Excluidas: <strong id="rep-excl">—</strong></span>
+              <span class="report-item" id="rep-reasons"></span>
+            </div>
+          </div>
+
+          <!-- Riesgos -->
+          <div id="riesgos-section" class="hidden">
+            <div class="section-header" style="margin-top:24px;">
+              <h3>Alertas y riesgos</h3>
+            </div>
+            <div class="riesgos-grid">
+              <div class="riesgo-card riesgo-warn">
+                <div class="riesgo-icon">📉</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">Tasa de baja promedio</span>
+                  <span class="riesgo-value" id="riesgo-tasa">—</span>
+                  <span class="riesgo-explicacion" id="riesgo-tasa-exp"></span>
+                </div>
+              </div>
+              <div class="riesgo-card riesgo-danger">
+                <div class="riesgo-icon">🗺️</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">Zona con menor actividad</span>
+                  <span class="riesgo-value" id="riesgo-zona">—</span>
+                  <span class="riesgo-explicacion" id="riesgo-zona-exp"></span>
+                </div>
+              </div>
+              <div class="riesgo-card riesgo-info">
+                <div class="riesgo-icon">👥</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">Concentración de ventas</span>
+                  <span class="riesgo-value" id="riesgo-conc">—</span>
+                  <span class="riesgo-explicacion" id="riesgo-conc-exp"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas automáticas -->
+          <div id="alertas-auto-section" class="hidden">
+            <div class="section-header" style="margin-top:24px;">
+              <h3>🔔 Alertas automáticas</h3>
+              <p>Anomalías detectadas en los datos cargados</p>
+            </div>
+            <div id="alertas-auto-list"></div>
+          </div>
+
+          <!-- Proyecciones -->
+          <div id="proyecciones-section" class="hidden">
+            <div class="section-header" style="margin-top: 24px;">
+              <h3>Proyecciones</h3>
+              <p>Basadas en el promedio de los últimos 3 meses</p>
+            </div>
+            <div class="proyecciones-grid">
+              <div class="proy-card">
+                <div class="proy-icon">📅</div>
+                <div class="proy-info">
+                  <span class="proy-label">Esta semana</span>
+                  <span class="proy-value" id="proy-semana">—</span>
+                </div>
+              </div>
+              <div class="proy-card">
+                <div class="proy-icon">📆</div>
+                <div class="proy-info">
+                  <span class="proy-label">Este mes</span>
+                  <span class="proy-value" id="proy-mes">—</span>
+                </div>
+              </div>
+              <div class="proy-card">
+                <div class="proy-icon">🗓️</div>
+                <div class="proy-info">
+                  <span class="proy-label">Este año</span>
+                  <span class="proy-value" id="proy-anio">—</span>
+                </div>
+              </div>
+              <div class="proy-card" id="proy-tend-card">
+                <div class="proy-icon" id="proy-tend-icon">📊</div>
+                <div class="proy-info">
+                  <span class="proy-label">Tendencia 3 meses</span>
+                  <span class="proy-value" id="proy-tendencia">—</span>
+                  <span class="proy-explicacion" id="proy-tend-exp" style="font-size:12px; color:var(--text-secondary); margin-top:4px; display:block;"></span>
+                </div>
+              </div>
+            </div>
+            <!-- Comparación mes a mes -->
+            <div class="card proy-comparacion" id="proy-comparacion" style="margin-top:16px;">
+              <div style="margin-bottom:12px;">
+                <span style="font-size:13px; font-weight:700; color:var(--text-primary);">Comparación mensual</span>
+                <span id="proy-comp-subtitle" style="font-size:12px; color:var(--text-secondary); margin-left:8px;"></span>
+                <div id="proy-comp-resumen" style="font-size:12px; margin-top:4px;"></div>
+              </div>
+              <div class="proy-comp-grid">
+                <div class="proy-comp-item">
+                  <span class="proy-comp-label" id="proy-mes-ant-label">Mes anterior</span>
+                  <span class="proy-comp-value" id="proy-mes-ant-val">—</span>
+                </div>
+                <div class="proy-comp-arrow" id="proy-comp-arrow">→</div>
+                <div class="proy-comp-item">
+                  <span class="proy-comp-label" id="proy-mes-act-label">Mes actual</span>
+                  <span class="proy-comp-value" id="proy-mes-act-val">—</span>
+                </div>
+                <div class="proy-comp-variacion">
+                  <span class="proy-comp-label">Variación</span>
+                  <span class="proy-comp-value" id="proy-variacion-val">—</span>
+                  <span class="proy-comp-pct" id="proy-variacion-pct"></span>
+                </div>
+                <div class="proy-comp-variacion">
+                  <span class="proy-comp-label">Promedio 3 meses</span>
+                  <span class="proy-comp-value" id="proy-promedio-val">—</span>
+                </div>
+              </div>
+            </div>
+            <div class="proyecciones-grid" style="display:none">
+            </div>
+          </div>
+
+          <!-- KPIs -->
+          <div id="kpi-grid" class="kpi-grid hidden">
+            <div class="kpi-card">
+              <div class="kpi-icon">📦</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Trabajos del mes</span>
+                <span class="kpi-value" id="kpi-mes">—</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">✅</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Total registros</span>
+                <span class="kpi-value" id="kpi-concretados">—</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">⏳</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Zona más activa</span>
+                <span class="kpi-value" id="kpi-pendientes">—</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">📊</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Vendedor del mes</span>
+                <span class="kpi-value" id="kpi-cancelados">—</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">📈</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Tipo más frecuente</span>
+                <span class="kpi-value" id="kpi-proyeccion">—</span>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">🎯</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Tasa de baja</span>
+                <span class="kpi-value" id="kpi-tasa">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráficos -->
+          <div id="charts-grid" class="hidden">
+
+            <!-- Gráfico principal: ancho completo -->
+            <div class="chart-card chart-card-full">
+              <div class="chart-card-header">
+                <h4>Trabajos por mes / año</h4>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button class="btn-export-chart" onclick="exportChart('chart-mensual', 'trabajos-por-mes')" title="Descargar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                  <div class="chart-toggle">
+                  <button class="chart-toggle-btn active" id="btn-view-mes">Por mes</button>
+                  <button class="chart-toggle-btn" id="btn-view-anio">Por año</button>
+                </div>
+                </div>
+              </div>
+              <canvas id="chart-mensual"></canvas>
+            </div>
+
+            <!-- Fila inferior: 3 gráficos -->
+            <div class="charts-row">
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h4>Distribución por tipo</h4>
+                  <button class="btn-export-chart" onclick="exportChart('chart-tipo', 'distribucion-tipo')" title="Descargar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                </div>
+                <canvas id="chart-tipo"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h4>Trabajos por zona</h4>
+                  <button class="btn-export-chart" onclick="exportChart('chart-zona', 'trabajos-zona')" title="Descargar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                </div>
+                <canvas id="chart-zona"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h4>Ranking de vendedores</h4>
+                  <button class="btn-export-chart" onclick="exportChart('chart-vendedor', 'vendedores')" title="Descargar imagen"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                </div>
+                <canvas id="chart-vendedor"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Mapas de calor -->
+          <div id="heatmaps-section" class="hidden" style="margin-top:24px;">
+            <div class="section-header">
+              <h3>Mapas de calor</h3>
+              <p>Actividad por vendedor y zona a lo largo del tiempo</p>
+            </div>
+            <div class="charts-row" style="margin-bottom:24px;">
+              <div class="chart-card" style="grid-column: span 2;">
+                <h4>Vendedor × Mes</h4>
+                <div id="heatmap-vendedor"></div>
+              </div>
+              <div class="chart-card">
+                <h4>Zona × Mes</h4>
+                <div id="heatmap-zona"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Embudo de conversión -->
+          <div id="embudo-section" class="hidden" style="margin-top:24px;">
+            <div class="section-header">
+              <h3>Embudo de conversión</h3>
+              <p>Agenda → Instalación → Postventa</p>
+            </div>
+            <div class="card" style="padding:24px;">
+              <div id="embudo-list"></div>
+              <p id="embudo-nota" style="margin-top:12px; font-size:12px; color:var(--text-secondary);"></p>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- AGENDA -->
+        <section id="page-agenda" class="page">
+          <div class="section-header">
+            <h3>Agenda</h3>
+            <p>Todos los registros cargados</p>
+          </div>
+
+          <div id="agenda-empty" class="empty-state">📅 Cargá un archivo en el Dashboard primero</div>
+
+          <div id="agenda-container" class="hidden">
+            <!-- Filtros -->
+            <div class="agenda-filtros card">
+              <div class="filtros-grid">
+                <div class="form-group">
+                  <label>Buscar</label>
+                  <input type="text" id="agenda-search" placeholder="Vendedor, tipo, zona…" />
+                </div>
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <select id="agenda-filter-tipo"><option value="">Todos</option></select>
+                </div>
+                <div class="form-group">
+                  <label>Zona</label>
+                  <select id="agenda-filter-zona"><option value="">Todas</option></select>
+                </div>
+                <div class="form-group">
+                  <label>Vendedor</label>
+                  <select id="agenda-filter-vendedor"><option value="">Todos</option></select>
+                </div>
+              </div>
+              <div class="filtros-acciones">
+                <span id="agenda-count" class="agenda-count"></span>
+                <button class="btn-secondary" id="agenda-clear">Limpiar filtros</button>
+              </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="card">
+              <table id="agenda-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Zona</th>
+                    <th>Vendedor</th>
+                    <th>Promoción</th>
+                    <th>Plan nuevo</th>
+                  </tr>
+                </thead>
+                <tbody id="agenda-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="paginacion">
+              <button class="btn-secondary" id="agenda-prev">← Anterior</button>
+              <span id="agenda-page-info"></span>
+              <button class="btn-secondary" id="agenda-next">Siguiente →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMERCIAL -->
+        <section id="page-comercial" class="page">
+          <div class="section-header">
+            <h3>Módulo Comercial</h3>
+          </div>
+          <div class="agenda-filtros card" id="comercial-filtros" style="margin-bottom:16px; display:none;">
+            <div class="filtros-grid">
+              <div class="form-group">
+                <label>Desde</label>
+                <input type="date" id="comercial-desde" />
+              </div>
+              <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" id="comercial-hasta" />
+              </div>
+            </div>
+            <div class="filtros-acciones">
+              <span id="comercial-count" class="agenda-count"></span>
+              <button class="btn-secondary" id="comercial-clear">Limpiar fechas</button>
+            </div>
+          </div>
+          <div id="comercial-content">
+            <div class="empty-state">Cargá un archivo en el Dashboard primero</div>
+          </div>
+        </section>
+
+        <!-- CLIENTES -->
+<section id="page-clientes" class="page">
+  <div class="section-header">
+    <h3>Clientes</h3>
+    <p>Listado de clientes agendados</p>
+  </div>
+
+  <div class="agenda-filtros card" id="clientes-filtros" style="margin-bottom:16px; display:none;">
+    <div class="filtros-grid" style="grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap:12px;">
+      <div class="form-group">
+        <label>Buscar</label>
+        <input type="text" id="clientes-search" placeholder="Nombre, DNI o código…" style="width:100%;"/>
+      </div>
+      <div class="form-group">
+        <label>Agendar como</label>
+        <select id="clientes-filter-agendar" style="width:100%;"><option value="">Todos</option></select>
+      </div>
+      <div class="form-group">
+        <label>Vendedor</label>
+        <select id="clientes-filter-vendedor" style="width:100%;"><option value="">Todos</option></select>
+      </div>
+      <div class="form-group">
+        <label>Zona</label>
+        <select id="clientes-filter-zona" style="width:100%;"><option value="">Todas</option></select>
+      </div>
+      <div class="form-group">
+        <label>Situación</label>
+        <select id="clientes-filter-situacion" style="width:100%;"><option value="">Todas</option></select>
+      </div>
+      <div class="form-group">
+        <label>Desde</label>
+        <input type="date" id="clientes-desde" style="width:100%;"/>
+      </div>
+      <div class="form-group">
+        <label>Hasta</label>
+        <input type="date" id="clientes-hasta" style="width:100%;"/>
+      </div>
+    </div>
+    <div class="filtros-acciones" style="margin-top:10px; display:flex; align-items:center; gap:12px;">
+      <span id="clientes-count" class="agenda-count"></span>
+      <button class="btn-secondary" id="clientes-clear">Limpiar filtros</button>
+    </div>
+  </div>
+
+  <div id="clientes-content">
+    <div class="empty-state">Cargá un archivo en el Dashboard primero</div>
+  </div>
+
+  <div id="clientes-pagination" style="display:none; margin-top:12px; display:flex; align-items:center; gap:8px;">
+    <button class="btn-secondary" id="clientes-prev">← Anterior</button>
+    <span id="clientes-page-info" style="font-size:.85rem; color:var(--text-secondary);"></span>
+    <button class="btn-secondary" id="clientes-next">Siguiente →</button>
+  </div>
+</section>
+
+        <!-- ZONAS -->
+        <section id="page-zonas" class="page">
+          <div class="section-header">
+            <h3>Zonas</h3>
+          </div>
+          <div class="agenda-filtros card" id="zonas-filtros" style="margin-bottom:16px; display:none;">
+            <div class="filtros-grid">
+              <div class="form-group">
+                <label>Desde</label>
+                <input type="date" id="zonas-desde" />
+              </div>
+              <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" id="zonas-hasta" />
+              </div>
+              <div class="form-group">
+                <label>Tipo de trabajo</label>
+                <select id="zonas-filter-tipo"><option value="">Todos</option></select>
+              </div>
+            </div>
+            <div class="filtros-acciones">
+              <span id="zonas-count" class="agenda-count"></span>
+              <button class="btn-secondary" id="zonas-clear">Limpiar fechas</button>
+            </div>
+          </div>
+          <div id="zonas-content">
+            <div class="empty-state">Cargá un archivo en el Dashboard primero</div>
+          </div>
+        </section>
+
+        <!-- PLANES -->
+        <section id="page-planes" class="page">
+          <div class="section-header">
+            <h3>Planes</h3>
+          </div>
+          <div class="agenda-filtros card" id="planes-filtros" style="margin-bottom:16px; display:none;">
+            <div class="filtros-grid">
+              <div class="form-group">
+                <label>Desde</label>
+                <input type="date" id="planes-desde" />
+              </div>
+              <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" id="planes-hasta" />
+              </div>
+            </div>
+            <div class="filtros-acciones">
+              <span id="planes-count" class="agenda-count"></span>
+              <button class="btn-secondary" id="planes-clear">Limpiar fechas</button>
+            </div>
+          </div>
+          <div id="planes-content">
+            <div class="empty-state">Cargá un archivo en el Dashboard primero</div>
+          </div>
+        </section>
+
+        <!-- PROMOCIONES -->
+        <section id="page-promociones" class="page">
+          <div class="section-header">
+            <h3>Promociones</h3>
+            <p>Ranking de promociones más utilizadas</p>
+          </div>
+          <div class="agenda-filtros card" id="promociones-filtros" style="margin-bottom:16px; display:none;">
+            <div class="filtros-grid">
+              <div class="form-group">
+                <label>Desde</label>
+                <input type="date" id="promociones-desde" />
+              </div>
+              <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" id="promociones-hasta" />
+              </div>
+            </div>
+            <div class="filtros-acciones">
+              <span id="promociones-count" class="agenda-count"></span>
+              <button class="btn-secondary" id="promociones-clear">Limpiar fechas</button>
+            </div>
+          </div>
+          <div id="promociones-content">
+            <div class="empty-state">Cargá un archivo en el Dashboard primero</div>
+          </div>
+        </section>
+
+        <!-- POSTVENTA -->
+        <section id="page-postventa" class="page">
+          <div class="section-header">
+            <h3>Postventa</h3>
+            <p>Seguimiento de contacto y satisfacción del cliente</p>
+          </div>
+
+          <div id="postventa-empty" class="empty-state">🔧 Cargá un archivo en el Dashboard primero</div>
+
+          <div id="postventa-setup" class="hidden card" style="margin-bottom: 16px;">
+            <h4>Seleccioná las columnas de postventa</h4>
+            <div class="filtros-grid" style="margin-top: 12px;">
+              <div class="form-group">
+                <label>Columna Post Venta *</label>
+                <select id="pv-col-postventa"><option value="">— elegí una columna —</option></select>
+              </div>
+              <div class="form-group">
+                <label>Columna Respuesta</label>
+                <select id="pv-col-respuesta"><option value="">— opcional —</option></select>
+              </div>
+            </div>
+            <button class="btn-primary" id="btn-cargar-postventa">Cargar postventa</button>
+          </div>
+
+          <div id="postventa-container" class="hidden">
+            <!-- Resumen -->
+            <div class="riesgos-grid" style="margin-bottom: 24px;">
+              <div class="riesgo-card riesgo-info">
+                <div class="riesgo-icon">📋</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">Total registros</span>
+                  <span class="riesgo-value" id="pv-total">—</span>
+                </div>
+              </div>
+              <div class="riesgo-card riesgo-warn">
+                <div class="riesgo-icon">📞</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">Contactados</span>
+                  <span class="riesgo-value" id="pv-contactados">—</span>
+                </div>
+              </div>
+              <div class="riesgo-card riesgo-danger">
+                <div class="riesgo-icon">❌</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">No contactados</span>
+                  <span class="riesgo-value" id="pv-no-contactados">—</span>
+                </div>
+              </div>
+              <div class="riesgo-card" style="border-color: var(--success);">
+                <div class="riesgo-icon">✅</div>
+                <div class="riesgo-info">
+                  <span class="riesgo-label">% contactados</span>
+                  <span class="riesgo-value" id="pv-pct">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="agenda-filtros card">
+              <div class="filtros-grid">
+                <div class="form-group">
+                  <label>Buscar en respuesta</label>
+                  <input type="text" id="pv-search" placeholder="Palabra clave…" />
+                </div>
+                <div class="form-group">
+                  <label>Vendedor</label>
+                  <select id="pv-filter-vendedor"><option value="">Todos</option></select>
+                </div>
+                <div class="form-group">
+                  <label>Zona</label>
+                  <select id="pv-filter-zona"><option value="">Todas</option></select>
+                </div>
+              </div>
+              <div class="filtros-acciones">
+                <span id="pv-count" class="agenda-count"></span>
+                <button class="btn-secondary" id="pv-clear">Limpiar filtros</button>
+              </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="card">
+              <table id="pv-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Zona</th>
+                    <th>Vendedor</th>
+                    <th>Respuesta del cliente</th>
+                  </tr>
+                </thead>
+                <tbody id="pv-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="paginacion">
+              <button class="btn-secondary" id="pv-prev">← Anterior</button>
+              <span id="pv-page-info"></span>
+              <button class="btn-secondary" id="pv-next">Siguiente →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORTES -->
+        <section id="page-reportes" class="page">
+          <div class="section-header">
+            <h3>Reportes</h3>
+            <p>Exportá los datos analizados a Excel</p>
+          </div>
+
+          <div id="reportes-empty" class="empty-state">📈 Cargá un archivo en el Dashboard primero</div>
+
+          <div id="reportes-container" class="hidden">
+            <div class="card" style="padding: 32px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+              <h4 style="margin-bottom: 8px;">Reporte completo de ventas</h4>
+              <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                Descargá un Excel con 6 hojas: Resumen general, Agenda completa,
+                Por mes, Por vendedor, Por tipo y Por zona.
+              </p>
+              <button class="btn-primary" id="btn-exportar" style="font-size: 16px; padding: 12px 32px;">
+                ⬇ Descargar reporte Excel
+              </button>
+              <p id="export-status" style="margin-top: 12px; color: var(--text-secondary); font-size: 13px;"></p>
+
+              <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                <button class="btn-primary" id="btn-exportar-pdf" style="font-size: 16px; padding: 12px 32px;">
+                  📄 Descargar resumen PDF
+                </button>
+                <p id="export-pdf-status" style="margin-top: 12px; color: var(--text-secondary); font-size: 13px;"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BAJAS -->
+        <section id="page-bajas" class="page">
+          <div class="section-header">
+            <h3>Módulo de Bajas</h3>
+            <p>Estadísticas y comparación de bajas vs ventas</p>
+          </div>
+
+          <div id="bajas-empty" class="empty-state">📉 Cargá un archivo en el Dashboard primero</div>
+
+          <div id="bajas-container" class="hidden">
+
+            <!-- Filtro de período -->
+            <div class="card agenda-filtros" style="margin-bottom:16px;">
+              <div class="filtros-grid">
+                <div class="form-group">
+                  <label>Desde</label>
+                  <input type="date" id="bajas-desde" />
+                </div>
+                <div class="form-group">
+                  <label>Hasta</label>
+                  <input type="date" id="bajas-hasta" />
+                </div>
+              </div>
+              <div class="filtros-acciones">
+                <span id="bajas-period-label" class="agenda-count"></span>
+                <button class="btn-secondary" id="bajas-clear-filtro">Limpiar fechas</button>
+              </div>
+            </div>
+
+            <!-- KPIs de Bajas -->
+            <div class="kpi-grid" id="bajas-kpi-grid" style="margin-bottom:24px;">
+              <div class="kpi-card" style="border-color:var(--danger)">
+                <div class="kpi-icon">📉</div>
+                <div class="kpi-info">
+                  <span class="kpi-label">Total bajas</span>
+                  <span class="kpi-value" id="bk-total">—</span>
+                </div>
+              </div>
+              <div class="kpi-card" style="border-color:var(--success)">
+                <div class="kpi-icon">📦</div>
+                <div class="kpi-info">
+                  <span class="kpi-label">Total ventas</span>
+                  <span class="kpi-value" id="bk-ventas">—</span>
+                </div>
+              </div>
+              <div class="kpi-card" style="border-color:var(--info)">
+                <div class="kpi-icon">⚖️</div>
+                <div class="kpi-info">
+                  <span class="kpi-label">Saldo neto</span>
+                  <span class="kpi-value" id="bk-neto">—</span>
+                </div>
+              </div>
+              <div class="kpi-card" style="border-color:var(--warning)">
+                <div class="kpi-icon">📊</div>
+                <div class="kpi-info">
+                  <span class="kpi-label">Tasa de baja</span>
+                  <span class="kpi-value" id="bk-tasa">—</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfico comparación + motivos -->
+            <div class="charts-row" style="margin-bottom:24px;">
+              <div class="chart-card" style="grid-column: span 2;">
+                <h4>Ventas vs Bajas por mes</h4>
+                <canvas id="chart-ventas-bajas"></canvas>
+              </div>
+              <div class="chart-card">
+                <h4>Motivos de baja</h4>
+                <div id="motivos-aviso" style="display:none; color:#f59e0b; font-size:13px; margin-bottom:8px; font-weight:500;"></div>
+                <canvas id="chart-motivos"></canvas>
+              </div>
+            </div>
+
+            <!-- Tabla mes a mes -->
+            <div class="card">
+              <h4 style="margin-bottom:16px;">Detalle mes a mes</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mes</th>
+                    <th>Ventas</th>
+                    <th>Bajas</th>
+                    <th>Saldo neto</th>
+                    <th>Tasa de baja</th>
+                  </tr>
+                </thead>
+                <tbody id="bajas-tbody"></tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- COMPARADOR DE PERÍODOS -->
+        <section id="page-comparador" class="page">
+          <div class="section-header">
+            <h3>Comparador de períodos</h3>
+            <p>Compará dos rangos de fechas y analizá las diferencias</p>
+          </div>
+
+          <div id="comparador-empty" class="empty-state">🔀 Cargá un archivo en el Dashboard primero</div>
+
+          <div id="comparador-container" class="hidden">
+
+            <!-- Selectores de período -->
+            <div class="charts-row" style="margin-bottom:24px;">
+              <div class="card" style="padding:20px;">
+                <h4 style="margin-bottom:12px; color:var(--primary);">📅 Período 1</h4>
+                <div class="filtros-grid">
+                  <div class="form-group">
+                    <label>Desde</label>
+                    <input type="date" id="comp-p1-desde" />
+                  </div>
+                  <div class="form-group">
+                    <label>Hasta</label>
+                    <input type="date" id="comp-p1-hasta" />
+                  </div>
+                </div>
+              </div>
+              <div class="card" style="padding:20px;">
+                <h4 style="margin-bottom:12px; color:var(--warning);">📅 Período 2</h4>
+                <div class="filtros-grid">
+                  <div class="form-group">
+                    <label>Desde</label>
+                    <input type="date" id="comp-p2-desde" />
+                  </div>
+                  <div class="form-group">
+                    <label>Hasta</label>
+                    <input type="date" id="comp-p2-hasta" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-primary" id="btn-comparar" style="margin-bottom:24px;">Comparar períodos</button>
+
+            <!-- Resultado -->
+            <div id="comparador-resultado" class="hidden">
+
+              <!-- KPIs comparación -->
+              <div class="riesgos-grid" style="margin-bottom:24px;" id="comp-kpis"></div>
+
+              <!-- Gráficos comparación -->
+              <div class="charts-row" style="margin-bottom:24px;">
+                <div class="chart-card">
+                  <h4>Ventas por tipo</h4>
+                  <canvas id="comp-chart-tipo"></canvas>
+                </div>
+                <div class="chart-card">
+                  <h4>Ventas por zona</h4>
+                  <canvas id="comp-chart-zona"></canvas>
+                </div>
+                <div class="chart-card">
+                  <h4>Ventas por vendedor</h4>
+                  <canvas id="comp-chart-vendedor"></canvas>
+                </div>
+              </div>
+
+              <!-- Tabla detalle -->
+              <div class="card">
+                <h4 style="margin-bottom:16px;">Detalle por categoría</h4>
+                <div id="comp-tabla"></div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMINISTRACIÓN -->
+        <section id="page-administracion" class="page">
+          <div class="section-header">
+            <h3>Administración</h3>
+            <p>Gestión de usuarios del sistema</p>
+          </div>
+
+          <div id="admin-no-permiso" class="empty-state hidden">⚠️ Solo los administradores pueden acceder a esta sección</div>
+
+          <div id="admin-container" class="hidden">
+
+            <!-- Crear usuario -->
+            <div class="card" style="margin-bottom: 24px;">
+              <h4 style="margin-bottom: 16px;">➕ Crear usuario</h4>
+              <div class="filtros-grid">
+                <div class="form-group">
+                  <label>Usuario</label>
+                  <input type="text" id="new-username" placeholder="Nombre de usuario" />
+                </div>
+                <div class="form-group">
+                  <label>Contraseña</label>
+                  <input type="password" id="new-password" placeholder="Contraseña" />
+                </div>
+                <div class="form-group">
+                  <label>Rol</label>
+                  <select id="new-rol">
+                    <option value="usuario">Usuario</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn-primary" id="btn-crear-usuario">Crear usuario</button>
+              <span id="crear-status" style="margin-left: 12px; font-size: 13px;"></span>
+            </div>
+
+            <!-- Lista de usuarios -->
+            <div class="card">
+              <h4 style="margin-bottom: 16px;">👥 Usuarios del sistema</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Cambiar contraseña</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody"></tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="/js/app.js"></script>
+
+<!-- Notificaciones -->
+  <div id="toast-container"></div>
+
+  <!-- Modal de confirmación -->
+  <div id="confirm-overlay" class="hidden">
+    <div class="confirm-box">
+      <p id="confirm-message"></p>
+      <div class="confirm-actions">
+        <button class="btn-secondary" id="confirm-no">Cancelar</button>
+        <button class="btn-danger" id="confirm-yes">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
