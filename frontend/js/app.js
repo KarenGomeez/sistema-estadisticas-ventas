@@ -39,6 +39,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   await checkSession();
 });
 
+document.addEventListener("DOMContentLoaded", async () => {
+  setupDate();
+  setupDarkMode();
+  setupLanguage();   // ← agregá esta línea
+  setupNavigation();
+  setupSidebarToggle();
+  setupLogin();
+  setupLogout();
+  setupUpload();
+  await checkSession();
+});
+
 // ══════════════════════════════════════════
 //  Sesión
 // ══════════════════════════════════════════
@@ -318,15 +330,21 @@ function renderRiesgos(riesgos) {
   if (!riesgos || !Object.keys(riesgos).length) return;
   document.getElementById("riesgos-section").classList.remove("hidden");
 
-  document.getElementById("riesgo-tasa").textContent = riesgos.tasa_baja_promedio + "%";
-  document.getElementById("riesgo-tasa-exp").textContent = riesgos.tasa_baja_explicacion ?? "";
+ document.getElementById("riesgo-tasa").textContent = riesgos.tasa_baja_promedio + "%";
+  document.getElementById("riesgo-tasa-exp").textContent = currentLang === "en"
+    ? `For every 100 sales, ${riesgos.tasa_baja_promedio} clients cancel on average`
+    : riesgos.tasa_baja_explicacion ?? "";
 
   document.getElementById("riesgo-zona").textContent =
     riesgos.zona_riesgo + " (" + riesgos.zona_riesgo_cant + ")";
-  document.getElementById("riesgo-zona-exp").textContent = riesgos.zona_explicacion ?? "";
+  document.getElementById("riesgo-zona-exp").textContent = currentLang === "en"
+    ? `Zone ${riesgos.zona_riesgo} has the lowest activity (${riesgos.zona_riesgo_cant} jobs, ${riesgos.zona_explicacion_pct ?? ""}% of total)`
+    : riesgos.zona_explicacion ?? "";
 
   document.getElementById("riesgo-conc").textContent = riesgos.concentracion_pct + "%";
-  document.getElementById("riesgo-conc-exp").textContent = riesgos.concentracion_explicacion ?? "";
+  document.getElementById("riesgo-conc-exp").textContent = currentLang === "en"
+    ? `${riesgos.concentracion_nombres ?? ""} concentrate ${riesgos.concentracion_pct}% of all sales`
+    : riesgos.concentracion_explicacion ?? "";
 }
 
 // ══════════════════════════════════════════
@@ -352,13 +370,19 @@ function renderProyecciones(proy) {
     const absTend = Math.abs(tend);
     const mesRef  = proy.nombre_mes_anterior || "el mes anterior";
     if (tend > 0) {
-      tendExp.textContent = `Subió ${absTend} trabajos respecto a ${mesRef}`;
+      tendExp.textContent = currentLang === "en"
+        ? `Rose ${absTend} jobs compared to ${mesRef}`
+        : `Subió ${absTend} trabajos respecto a ${mesRef}`;
       tendExp.style.color = "var(--success)";
     } else if (tend < 0) {
-      tendExp.textContent = `Bajó ${absTend} trabajos respecto a ${mesRef}`;
+      tendExp.textContent = currentLang === "en"
+        ? `Dropped ${absTend} jobs compared to ${mesRef}`
+        : `Bajó ${absTend} trabajos respecto a ${mesRef}`;
       tendExp.style.color = "var(--danger)";
     } else {
-      tendExp.textContent = `Sin cambios respecto a ${mesRef}`;
+      tendExp.textContent = currentLang === "en"
+        ? `No changes compared to ${mesRef}`
+        : `Sin cambios respecto a ${mesRef}`;
       tendExp.style.color = "var(--text-secondary)";
     }
   }
@@ -394,11 +418,17 @@ function renderProyecciones(proy) {
   if (resumen) {
     const abs = Math.abs(varMom);
     if (varMom < 0) {
-      resumen.innerHTML = `⚠️ <span style="color:var(--danger)">Bajó ${abs} trabajos respecto al mes anterior (${varPct}%)</span>`;
+      resumen.innerHTML = currentLang === "en"
+        ? `⚠️ <span style="color:var(--danger)">Dropped ${abs} jobs compared to previous month (${varPct}%)</span>`
+        : `⚠️ <span style="color:var(--danger)">Bajó ${abs} trabajos respecto al mes anterior (${varPct}%)</span>`;
     } else if (varMom > 0) {
-      resumen.innerHTML = `✅ <span style="color:var(--success)">Subió ${abs} trabajos respecto al mes anterior (+${varPct}%)</span>`;
+      resumen.innerHTML = currentLang === "en"
+        ? `✅ <span style="color:var(--success)">Rose ${abs} jobs compared to previous month (+${varPct}%)</span>`
+        : `✅ <span style="color:var(--success)">Subió ${abs} trabajos respecto al mes anterior (+${varPct}%)</span>`;
     } else {
-      resumen.innerHTML = `<span style="color:var(--text-secondary)">Sin cambios respecto al mes anterior</span>`;
+      resumen.innerHTML = currentLang === "en"
+        ? `<span style="color:var(--text-secondary)">No changes compared to previous month</span>`
+        : `<span style="color:var(--text-secondary)">Sin cambios respecto al mes anterior</span>`;
     }
   }
 }
@@ -883,6 +913,19 @@ function initPostventa() {
   document.getElementById("postventa-empty").classList.add("hidden");
   document.getElementById("postventa-setup").classList.remove("hidden");
 
+  // Traducir textos de postventa
+  document.querySelector("#postventa-setup h4").textContent = currentLang === "en"
+    ? "Select after-sales columns"
+    : "Seleccioná las columnas de postventa";
+  document.querySelector("label[for='pv-col-postventa']").textContent = currentLang === "en"
+    ? "After-sales column *"
+    : "Columna Post Venta *";
+  document.querySelector("label[for='pv-col-respuesta']").textContent = currentLang === "en"
+    ? "Response column"
+    : "Columna Respuesta";
+  document.getElementById("btn-cargar-postventa").textContent = currentLang === "en"
+    ? "Load after-sales"
+    : "Cargar postventa";
   if (!document.getElementById("postventa-setup").dataset.init) {
     document.getElementById("btn-cargar-postventa").addEventListener("click", cargarPostventa);
     document.getElementById("pv-search").addEventListener("input", applyPvFilters);
@@ -1000,8 +1043,12 @@ function renderPvPage() {
       <td>${r.respuesta ?? "—"}</td>
     </tr>`).join("");
 
-  document.getElementById("pv-count").textContent = `${total} respuestas encontradas`;
-  document.getElementById("pv-page-info").textContent = `Página ${pvPage} de ${pages}`;
+  document.getElementById("pv-count").textContent = currentLang === "en"
+    ? `${total} responses found`
+    : `${total} respuestas encontradas`;
+  document.getElementById("pv-page-info").textContent = currentLang === "en"
+    ? `Page ${pvPage} of ${pages}`
+    : `Página ${pvPage} de ${pages}`;
   document.getElementById("pv-prev").disabled = pvPage === 1;
   document.getElementById("pv-next").disabled = pvPage === pages;
 }
@@ -1468,21 +1515,21 @@ function renderBajasFiltrado() {
       labels: comp.map(r => r.mes),
       datasets: [
         {
-          label: "Ventas",
+          label: currentLang === "en" ? "Sales" : "Ventas",
           data: comp.map(r => r.ventas),
           backgroundColor: "#4f46e5aa",
           borderColor: "#4f46e5",
           borderWidth: 1,
         },
         {
-          label: "Bajas",
+          label: currentLang === "en" ? "Cancellations" : "Bajas",
           data: comp.map(r => r.bajas),
           backgroundColor: "#ef4444aa",
           borderColor: "#ef4444",
           borderWidth: 1,
         },
         {
-          label: "Saldo neto",
+          label: currentLang === "en" ? "Net balance" : "Saldo neto",
           data: comp.map(r => r.neto),
           type: "line",
           borderColor: "#10b981",
@@ -1515,7 +1562,9 @@ function renderBajasFiltrado() {
   const avisoEl = document.getElementById("motivos-aviso");
   if (avisoEl) {
     if (sinEsp) {
-      avisoEl.textContent = "⚠️ " + sinEsp.cantidad + " bajas sin motivo registrado";
+      avisoEl.textContent = currentLang === "en"
+        ? "⚠️ " + sinEsp.cantidad + " cancellations with no registered reason"
+        : "⚠️ " + sinEsp.cantidad + " bajas sin motivo registrado";
       avisoEl.style.display = "block";
     } else {
       avisoEl.style.display = "none";
@@ -1557,8 +1606,8 @@ function renderBajasFiltrado() {
   // Label período
   const label = document.getElementById("bajas-period-label");
   label.textContent = (desde || hasta)
-    ? `Mostrando ${comp.length} meses filtrados`
-    : `${comp.length} meses en total`;
+    ? (currentLang === "en" ? `Showing ${comp.length} filtered months` : `Mostrando ${comp.length} meses filtrados`)
+    : (currentLang === "en" ? `${comp.length} months total` : `${comp.length} meses en total`);
 }
 
 // ══════════════════════════════════════════
@@ -1724,19 +1773,29 @@ function renderHeatmapInsights(containerId, campo) {
   // Armar texto
   const insights = [];
 
-  insights.push(`🏆 <strong>${maxNombre}</strong> tuvo su mejor mes en <strong>${maxMes}</strong> con <strong>${maxVal}</strong> trabajos.`);
+  insights.push(currentLang === "en"
+    ? `🏆 <strong>${maxNombre}</strong> had their best month in <strong>${maxMes}</strong> with <strong>${maxVal}</strong> jobs.`
+    : `🏆 <strong>${maxNombre}</strong> tuvo su mejor mes en <strong>${maxMes}</strong> con <strong>${maxVal}</strong> trabajos.`);
 
   if (sinActividad.length > 0 && sinActividad.length <= 4) {
-    insights.push(`⚠️ Sin actividad: ${sinActividad.map(s => `<strong>${s}</strong>`).join(", ")}.`);
+    insights.push(currentLang === "en"
+      ? `⚠️ No activity: ${sinActividad.map(s => `<strong>${s}</strong>`).join(", ")}.`
+      : `⚠️ Sin actividad: ${sinActividad.map(s => `<strong>${s}</strong>`).join(", ")}.`);
   } else if (sinActividad.length > 4) {
-    insights.push(`⚠️ Hay <strong>${sinActividad.length}</strong> combinaciones sin actividad registrada.`);
+    insights.push(currentLang === "en"
+      ? `⚠️ There are <strong>${sinActividad.length}</strong> combinations with no recorded activity.`
+      : `⚠️ Hay <strong>${sinActividad.length}</strong> combinaciones sin actividad registrada.`);
   }
 
   if (mejorTendencia && mejorTendencia.diff > 0) {
-    insights.push(`📈 <strong>${mejorTendencia.nombre}</strong> mostró la mejor tendencia (+${mejorTendencia.diff} del primer al último mes).`);
+    insights.push(currentLang === "en"
+      ? `📈 <strong>${mejorTendencia.nombre}</strong> showed the best trend (+${mejorTendencia.diff} from first to last month).`
+      : `📈 <strong>${mejorTendencia.nombre}</strong> mostró la mejor tendencia (+${mejorTendencia.diff} del primer al último mes).`);
   }
   if (peorTendencia && peorTendencia.diff < 0) {
-    insights.push(`📉 <strong>${peorTendencia.nombre}</strong> mostró la mayor caída (${peorTendencia.diff} del primer al último mes).`);
+    insights.push(currentLang === "en"
+      ? `📉 <strong>${peorTendencia.nombre}</strong> showed the biggest drop (${peorTendencia.diff} from first to last month).`
+      : `📉 <strong>${peorTendencia.nombre}</strong> mostró la mayor caída (${peorTendencia.diff} del primer al último mes).`);
   }
 
   // Insertar debajo del canvas
@@ -1934,6 +1993,478 @@ function ejecutarComparacion() {
 }
 
 // ══════════════════════════════════════════
+//  Idioma (ES / EN)
+// ══════════════════════════════════════════
+let currentLang = "es";
+
+const i18n = {
+  es: {
+    // Sidebar
+    nav_principal: "PRINCIPAL",
+    nav_gestion: "GESTIÓN",
+    nav_seguimiento: "SEGUIMIENTO",
+    nav_sistema: "SISTEMA",
+    nav_dashboard: "Dashboard",
+    nav_agenda: "Agenda",
+    nav_comercial: "Comercial",
+    nav_clientes: "Clientes",
+    nav_zonas: "Zonas",
+    nav_planes: "Planes",
+    nav_promociones: "Promociones",
+    nav_postventa: "Postventa",
+    nav_reportes: "Reportes",
+    nav_bajas: "Bajas",
+    nav_comparador: "Comparador",
+    nav_administracion: "Administración",
+    // Dashboard
+    dashboard_titulo: "Resumen Ejecutivo",
+    dashboard_subtitulo: "Cargá un archivo Excel para ver los datos",
+    upload_label: "📂 Cargar archivo Excel",
+    btn_upload: "Cargar archivo",
+    btn_analizar: "Analizar datos",
+    hoja_label: "Hoja:",
+    btn_sel_hoja: "Seleccionar hoja",
+    mapear_titulo: "Mapear columnas",
+    col_fecha: "Fecha *",
+    col_tipo: "Tipo de trabajo *",
+    col_zona: "Zona",
+    col_vendedor: "Vendedor",
+    col_promo: "Promoción",
+    col_plan: "Plan nuevo",
+    opcional: "— opcional —",
+    // KPIs
+    kpi_mes: "Trabajos del mes",
+    kpi_total: "Total registros",
+    kpi_zona: "Zona más activa",
+    kpi_vendedor: "Vendedor del mes",
+    kpi_tipo: "Tipo más frecuente",
+    kpi_tasa: "Tasa de baja",
+    // Proyecciones
+    proy_titulo: "Proyecciones",
+    proy_subtitulo: "Basadas en el promedio de los últimos 3 meses",
+    proy_semana: "Esta semana",
+    proy_mes: "Este mes",
+    proy_anio: "Este año",
+    proy_tendencia: "Tendencia 3 meses",
+    comp_mensual: "Comparación mensual",
+    // Riesgos
+    riesgos_titulo: "Alertas y riesgos",
+    riesgo_tasa: "Tasa de baja promedio",
+    riesgo_zona: "Zona con menor actividad",
+    riesgo_conc: "Concentración de ventas",
+    // Alertas
+    alertas_titulo: "🔔 Alertas automáticas",
+    alertas_subtitulo: "Anomalías detectadas en los datos cargados",
+    // Módulos
+    desde: "Desde",
+    hasta: "Hasta",
+    limpiar_fechas: "Limpiar fechas",
+    limpiar_filtros: "Limpiar filtros",
+    tipo_trabajo: "Tipo de trabajo",
+    todos: "Todos",
+    todas: "Todas",
+    buscar: "Buscar",
+    // Agenda
+    agenda_titulo: "Agenda",
+    agenda_subtitulo: "Todos los registros cargados",
+    agenda_empty: "📅 Cargá un archivo en el Dashboard primero",
+    col_fecha_th: "Fecha",
+    col_tipo_th: "Tipo",
+    col_zona_th: "Zona",
+    col_vendedor_th: "Vendedor",
+    col_promo_th: "Promoción",
+    col_plan_th: "Plan nuevo",
+    // Reportes
+    reportes_titulo: "Reportes",
+    reportes_subtitulo: "Exportá los datos analizados a Excel",
+    reportes_empty: "📈 Cargá un archivo en el Dashboard primero",
+    reporte_titulo_card: "Reporte completo de ventas",
+    reporte_desc: "Descargá un Excel con 6 hojas: Resumen general, Agenda completa, Por mes, Por vendedor, Por tipo y Por zona.",
+    btn_excel: "⬇ Descargar reporte Excel",
+    btn_pdf: "📄 Descargar resumen PDF",
+    // Bajas
+    bajas_titulo: "Módulo de Bajas",
+    bajas_subtitulo: "Estadísticas y comparación de bajas vs ventas",
+    bajas_empty: "📉 Cargá un archivo en el Dashboard primero",
+    bk_total: "Total bajas",
+    bk_ventas: "Total ventas",
+    bk_neto: "Saldo neto",
+    bk_tasa: "Tasa de baja",
+    // Comparador
+    comp_titulo: "Comparador de períodos",
+    comp_subtitulo: "Compará dos rangos de fechas y analizá las diferencias",
+    comp_empty: "🔀 Cargá un archivo en el Dashboard primero",
+    btn_comparar: "Comparar períodos",
+    // Admin
+    admin_titulo: "Administración",
+    admin_subtitulo: "Gestión de usuarios del sistema",
+    admin_crear: "➕ Crear usuario",
+    admin_lista: "👥 Usuarios del sistema",
+    admin_usuario: "Usuario",
+    admin_password: "Contraseña",
+    admin_rol: "Rol",
+    btn_crear: "Crear usuario",
+    // Login
+    login_titulo: "Sistema de Ventas",
+    login_subtitulo: "Ingresá tus credenciales para continuar",
+    login_usuario: "Usuario",
+    login_password: "Contraseña",
+    login_placeholder_user: "Tu usuario",
+    login_placeholder_pwd: "Tu contraseña",
+    btn_login: "Ingresar",
+    login_error: "Usuario o contraseña incorrectos",
+    clientes_titulo: "Clientes",
+    clientes_subtitulo: "Listado de clientes agendados",
+    clientes_empty: "Cargá un archivo en el Dashboard primero",
+    comercial_titulo: "Módulo Comercial",
+    comercial_empty: "Cargá un archivo en el Dashboard primero",
+    zonas_titulo: "Zonas",
+    zonas_empty: "Cargá un archivo en el Dashboard primero",
+    planes_titulo: "Planes",
+    planes_empty: "Cargá un archivo en el Dashboard primero",
+    promociones_titulo: "Promociones",
+    promociones_empty: "Cargá un archivo en el Dashboard primero",
+    postventa_titulo: "Postventa",
+    postventa_empty: "🔧 Cargá un archivo en el Dashboard primero",
+    pag_anterior: "← Anterior",
+    pag_siguiente: "Siguiente →",
+  },
+  en: {
+    // Sidebar
+    nav_principal: "MAIN",
+    nav_gestion: "MANAGEMENT",
+    nav_seguimiento: "TRACKING",
+    nav_sistema: "SYSTEM",
+    nav_dashboard: "Dashboard",
+    nav_agenda: "Schedule",
+    nav_comercial: "Sales",
+    nav_clientes: "Clients",
+    nav_zonas: "Zones",
+    nav_planes: "Plans",
+    nav_promociones: "Promotions",
+    nav_postventa: "After-sales",
+    nav_reportes: "Reports",
+    nav_bajas: "Cancellations",
+    nav_comparador: "Comparator",
+    nav_administracion: "Administration",
+    // Dashboard
+    dashboard_titulo: "Executive Summary",
+    dashboard_subtitulo: "Load an Excel file to view data",
+    upload_label: "📂 Load Excel file",
+    btn_upload: "Load file",
+    btn_analizar: "Analyze data",
+    hoja_label: "Sheet:",
+    btn_sel_hoja: "Select sheet",
+    mapear_titulo: "Map columns",
+    col_fecha: "Date *",
+    col_tipo: "Work type *",
+    col_zona: "Zone",
+    col_vendedor: "Salesperson",
+    col_promo: "Promotion",
+    col_plan: "New plan",
+    opcional: "— optional —",
+    // KPIs
+    kpi_mes: "Jobs this month",
+    kpi_total: "Total records",
+    kpi_zona: "Most active zone",
+    kpi_vendedor: "Salesperson of the month",
+    kpi_tipo: "Most frequent type",
+    kpi_tasa: "Cancellation rate",
+    // Proyecciones
+    proy_titulo: "Projections",
+    proy_subtitulo: "Based on the last 3-month average",
+    proy_semana: "This week",
+    proy_mes: "This month",
+    proy_anio: "This year",
+    proy_tendencia: "3-month trend",
+    comp_mensual: "Monthly comparison",
+    // Riesgos
+    riesgos_titulo: "Alerts & risks",
+    riesgo_tasa: "Average cancellation rate",
+    riesgo_zona: "Least active zone",
+    riesgo_conc: "Sales concentration",
+    // Alertas
+    alertas_titulo: "🔔 Automatic alerts",
+    alertas_subtitulo: "Anomalies detected in loaded data",
+    // Módulos
+    desde: "From",
+    hasta: "To",
+    limpiar_fechas: "Clear dates",
+    limpiar_filtros: "Clear filters",
+    tipo_trabajo: "Work type",
+    todos: "All",
+    todas: "All",
+    buscar: "Search",
+    // Agenda
+    agenda_titulo: "Schedule",
+    agenda_subtitulo: "All loaded records",
+    agenda_empty: "📅 Load a file in the Dashboard first",
+    col_fecha_th: "Date",
+    col_tipo_th: "Type",
+    col_zona_th: "Zone",
+    col_vendedor_th: "Salesperson",
+    col_promo_th: "Promotion",
+    col_plan_th: "New plan",
+    // Reportes
+    reportes_titulo: "Reports",
+    reportes_subtitulo: "Export analyzed data to Excel",
+    reportes_empty: "📈 Load a file in the Dashboard first",
+    reporte_titulo_card: "Full sales report",
+    reporte_desc: "Download an Excel with 6 sheets: General summary, Full schedule, By month, By salesperson, By type and By zone.",
+    btn_excel: "⬇ Download Excel report",
+    btn_pdf: "📄 Download PDF summary",
+    // Bajas
+    bajas_titulo: "Cancellations",
+    bajas_subtitulo: "Statistics and comparison of cancellations vs sales",
+    bajas_empty: "📉 Load a file in the Dashboard first",
+    bk_total: "Total cancellations",
+    bk_ventas: "Total sales",
+    bk_neto: "Net balance",
+    bk_tasa: "Cancellation rate",
+    // Comparador
+    comp_titulo: "Period comparator",
+    comp_subtitulo: "Compare two date ranges and analyze differences",
+    comp_empty: "🔀 Load a file in the Dashboard first",
+    btn_comparar: "Compare periods",
+    // Admin
+    admin_titulo: "Administration",
+    admin_subtitulo: "System user management",
+    admin_crear: "➕ Create user",
+    admin_lista: "👥 System users",
+    admin_usuario: "Username",
+    admin_password: "Password",
+    admin_rol: "Role",
+    btn_crear: "Create user",
+    // Login
+    login_titulo: "Sales System",
+    login_subtitulo: "Enter your credentials to continue",
+    login_usuario: "Username",
+    login_password: "Password",
+    login_placeholder_user: "Your username",
+    login_placeholder_pwd: "Your password",
+    btn_login: "Sign in",
+    login_error: "Incorrect username or password",
+    clientes_titulo: "Clients",
+    clientes_subtitulo: "List of scheduled clients",
+    clientes_empty: "Load a file in the Dashboard first",
+    comercial_titulo: "Sales Module",
+    comercial_empty: "Load a file in the Dashboard first",
+    zonas_titulo: "Zones",
+    zonas_empty: "Load a file in the Dashboard first",
+    planes_titulo: "Plans",
+    planes_empty: "Load a file in the Dashboard first",
+    promociones_titulo: "Promotions",
+    promociones_empty: "Load a file in the Dashboard first",
+    postventa_titulo: "After-sales",
+    postventa_empty: "🔧 Load a file in the Dashboard first",
+    pag_anterior: "← Previous",
+    pag_siguiente: "Next →",
+  }
+};
+
+function t(key) {
+  return i18n[currentLang]?.[key] ?? i18n["es"][key] ?? key;
+}
+
+function applyLanguage() {
+  const l = currentLang;
+
+  // Login
+  document.querySelector("#login-screen h1").textContent = t("login_titulo");
+  document.querySelector("#login-screen p").textContent = t("login_subtitulo");
+  document.querySelector("label[for='username']").textContent = t("login_usuario");
+  document.querySelector("label[for='password']").textContent = t("login_password");
+  document.getElementById("username").placeholder = t("login_placeholder_user");
+  document.getElementById("password").placeholder = t("login_placeholder_pwd");
+  document.getElementById("btn-login").textContent = t("btn_login");
+  document.getElementById("login-error").textContent = t("login_error");
+
+  // Sidebar labels
+  const labels = document.querySelectorAll(".nav-section-label");
+  const labelKeys = ["nav_principal", "nav_gestion", "nav_seguimiento", "nav_sistema"];
+  labels.forEach((el, i) => { if (labelKeys[i]) el.textContent = t(labelKeys[i]); });
+
+  // Nav items
+  const navMap = {
+    dashboard: "nav_dashboard", agenda: "nav_agenda", comercial: "nav_comercial",
+    clientes: "nav_clientes", zonas: "nav_zonas", planes: "nav_planes",
+    promociones: "nav_promociones", postventa: "nav_postventa", reportes: "nav_reportes",
+    bajas: "nav_bajas", comparador: "nav_comparador", administracion: "nav_administracion",
+  };
+  document.querySelectorAll(".nav-item[data-page]").forEach(el => {
+    const key = navMap[el.dataset.page];
+    if (key) {
+      const icon = el.querySelector(".nav-icon");
+      el.textContent = " " + t(key);
+      if (icon) el.prepend(icon);
+    }
+  });
+
+  // Dashboard
+  document.querySelector("#page-dashboard .section-header h3").textContent = t("dashboard_titulo");
+  document.querySelector("#page-dashboard .section-header p").textContent = t("dashboard_subtitulo");
+  document.querySelector("#upload-bar span").textContent = t("upload_label");
+  document.getElementById("btn-upload").textContent = t("btn_upload");
+  document.getElementById("btn-analyze").textContent = t("btn_analizar");
+  document.querySelector("#sheet-selector label").textContent = t("hoja_label");
+  document.getElementById("btn-load-columns").textContent = t("btn_sel_hoja");
+  document.querySelector("#column-mapper h4").textContent = t("mapear_titulo");
+
+  // KPI labels
+  const kpiLabels = document.querySelectorAll(".kpi-label");
+  const kpiKeys = ["kpi_mes", "kpi_total", "kpi_zona", "kpi_vendedor", "kpi_tipo", "kpi_tasa"];
+  kpiLabels.forEach((el, i) => { if (kpiKeys[i]) el.textContent = t(kpiKeys[i]); });
+
+  // Proyecciones
+  const proySection = document.querySelector("#proyecciones-section .section-header h3");
+  if (proySection) proySection.textContent = t("proy_titulo");
+  const proyLabels = document.querySelectorAll(".proy-label");
+  const proyKeys = ["proy_semana", "proy_mes", "proy_anio", "proy_tendencia"];
+  proyLabels.forEach((el, i) => { if (proyKeys[i]) el.textContent = t(proyKeys[i]); });
+
+  // Riesgos
+  const riesgosH3 = document.querySelector("#riesgos-section .section-header h3");
+  if (riesgosH3) riesgosH3.textContent = t("riesgos_titulo");
+  const riesgoLabels = document.querySelectorAll(".riesgo-label");
+  const riesgoKeys = ["riesgo_tasa", "riesgo_zona", "riesgo_conc"];
+  riesgoLabels.forEach((el, i) => { if (riesgoKeys[i]) el.textContent = t(riesgoKeys[i]); });
+
+  // Botones de filtros
+  document.querySelectorAll("[id$='-clear']").forEach(btn => {
+    if (btn.id === "agenda-clear") btn.textContent = t("limpiar_filtros");
+    else btn.textContent = t("limpiar_fechas");
+  });
+  document.querySelectorAll("[id$='-desde']").closest?.(".form-group");
+
+  // Labels Desde/Hasta en todos los módulos
+  document.querySelectorAll(".form-group label").forEach(label => {
+    if (label.textContent.trim() === "Desde" || label.textContent.trim() === "From")
+      label.textContent = t("desde");
+    if (label.textContent.trim() === "Hasta" || label.textContent.trim() === "To")
+      label.textContent = t("hasta");
+    if (label.textContent.trim() === "Tipo de trabajo" || label.textContent.trim() === "Work type")
+      label.textContent = t("tipo_trabajo");
+    if (label.textContent.trim() === "Buscar" || label.textContent.trim() === "Search")
+      label.textContent = t("buscar");
+  });
+
+  // Agenda
+  document.querySelector("#page-agenda .section-header h3").textContent = t("agenda_titulo");
+  document.querySelector("#page-agenda .section-header p").textContent = t("agenda_subtitulo");
+  document.getElementById("agenda-empty").textContent = t("agenda_empty");
+
+  // Reportes
+  document.querySelector("#page-reportes .section-header h3").textContent = t("reportes_titulo");
+  document.querySelector("#page-reportes .section-header p").textContent = t("reportes_subtitulo");
+  document.getElementById("reportes-empty").textContent = t("reportes_empty");
+
+  // Bajas
+  document.querySelector("#page-bajas .section-header h3").textContent = t("bajas_titulo");
+  document.querySelector("#page-bajas .section-header p").textContent = t("bajas_subtitulo");
+  document.getElementById("bajas-empty").textContent = t("bajas_empty");
+  document.querySelectorAll("#bajas-kpi-grid .kpi-label").forEach((el, i) => {
+    const keys = ["bk_total", "bk_ventas", "bk_neto", "bk_tasa"];
+    if (keys[i]) el.textContent = t(keys[i]);
+  });
+
+  // Comparador
+  document.querySelector("#page-comparador .section-header h3").textContent = t("comp_titulo");
+  document.querySelector("#page-comparador .section-header p").textContent = t("comp_subtitulo");
+  document.getElementById("comparador-empty").textContent = t("comp_empty");
+  document.getElementById("btn-comparar").textContent = t("btn_comparar");
+
+  // Reportes botones
+  const btnExcel = document.getElementById("btn-exportar");
+  if (btnExcel) btnExcel.textContent = t("btn_excel");
+  const btnPdf = document.getElementById("btn-exportar-pdf");
+  if (btnPdf) btnPdf.textContent = t("btn_pdf");
+
+// Comparador títulos período
+  const compP1 = document.getElementById("comp-p1-titulo");
+  const compP2 = document.getElementById("comp-p2-titulo");
+  if (compP1) compP1.textContent = currentLang === "en" ? "📅 Period 1" : "📅 Período 1";
+  if (compP2) compP2.textContent = currentLang === "en" ? "📅 Period 2" : "📅 Período 2";
+
+  // Admin
+  document.querySelector("#page-administracion .section-header h3").textContent = t("admin_titulo");
+
+  // Admin
+  document.querySelector("#page-administracion .section-header h3").textContent = t("admin_titulo");
+  document.querySelector("#page-administracion .section-header p").textContent = t("admin_subtitulo");
+
+  // Clientes
+  const clientesH3 = document.querySelector("#page-clientes .section-header h3");
+  if (clientesH3) clientesH3.textContent = t("clientes_titulo");
+  const clientesP = document.querySelector("#page-clientes .section-header p");
+  if (clientesP) clientesP.textContent = t("clientes_subtitulo");
+  const clientesEmpty = document.querySelector("#clientes-content .empty-state");
+  if (clientesEmpty) clientesEmpty.textContent = t("clientes_empty");
+
+  // Comercial
+  const comercialH3 = document.querySelector("#page-comercial .section-header h3");
+  if (comercialH3) comercialH3.textContent = t("comercial_titulo");
+  const comercialEmpty = document.querySelector("#comercial-content .empty-state");
+  if (comercialEmpty) comercialEmpty.textContent = t("comercial_empty");
+
+  // Zonas
+  const zonasH3 = document.querySelector("#page-zonas .section-header h3");
+  if (zonasH3) zonasH3.textContent = t("zonas_titulo");
+  const zonasEmpty = document.querySelector("#zonas-content .empty-state");
+  if (zonasEmpty) zonasEmpty.textContent = t("zonas_empty");
+
+  // Planes
+  const planesH3 = document.querySelector("#page-planes .section-header h3");
+  if (planesH3) planesH3.textContent = t("planes_titulo");
+  const planesEmpty = document.querySelector("#planes-content .empty-state");
+  if (planesEmpty) planesEmpty.textContent = t("planes_empty");
+
+  // Promociones
+  const promoH3 = document.querySelector("#page-promociones .section-header h3");
+  if (promoH3) promoH3.textContent = t("promociones_titulo");
+  const promoEmpty = document.querySelector("#promociones-content .empty-state");
+  if (promoEmpty) promoEmpty.textContent = t("promociones_empty");
+
+  // Postventa
+  const pvH3 = document.querySelector("#page-postventa .section-header h3");
+  if (pvH3) pvH3.textContent = t("postventa_titulo");
+  document.getElementById("postventa-empty").textContent = t("postventa_empty");
+
+  // Paginación
+  const clientesPrev = document.getElementById("clientes-prev");
+  const clientesNext = document.getElementById("clientes-next");
+  if (clientesPrev) clientesPrev.textContent = t("pag_anterior");
+  if (clientesNext) clientesNext.textContent = t("pag_siguiente");
+  const agendaPrev = document.getElementById("agenda-prev");
+  const agendaNext = document.getElementById("agenda-next");
+  if (agendaPrev) agendaPrev.textContent = t("pag_anterior");
+  if (agendaNext) agendaNext.textContent = t("pag_siguiente");
+
+  // Fecha en topbar
+  document.getElementById("topbar-date").textContent = new Date().toLocaleDateString(
+    l === "en" ? "en-US" : "es-ES",
+    { weekday: "long", day: "numeric", month: "long", year: "numeric" }
+  );
+
+  // Label botón idioma
+  document.getElementById("lang-label").textContent = l === "es" ? "ES" : "EN";
+}
+
+function setupLanguage() {
+  const btn = document.getElementById("btn-lang-toggle");
+  if (!btn) return;
+  try {
+    const saved = localStorage.getItem("language");
+    if (saved) currentLang = saved;
+  } catch(e) {}
+  applyLanguage();
+  btn.addEventListener("click", () => {
+    currentLang = currentLang === "es" ? "en" : "es";
+    try { localStorage.setItem("language", currentLang); } catch(e) {}
+    applyLanguage();
+  });
+}
+
+// ══════════════════════════════════════════
 //  Modo oscuro
 // ══════════════════════════════════════════
 function setupDarkMode() {
@@ -1979,11 +2510,17 @@ function renderAlertasAutomaticas(data) {
     const mesAct = proy.nombre_mes_actual   || "el mes actual";
     const mesAnt = proy.nombre_mes_anterior || "el mes anterior";
     if (varPct <= -20) {
-      alertas.push({ tipo: "danger",  icono: "📉", texto: `Caída fuerte: <strong>${mesAct}</strong> bajó <strong>${Math.abs(varPct)}%</strong> respecto a ${mesAnt}.` });
+      alertas.push({ tipo: "danger", icono: "📉", texto: currentLang === "en"
+        ? `Strong drop: <strong>${mesAct}</strong> fell <strong>${Math.abs(varPct)}%</strong> compared to ${mesAnt}.`
+        : `Caída fuerte: <strong>${mesAct}</strong> bajó <strong>${Math.abs(varPct)}%</strong> respecto a ${mesAnt}.` });
     } else if (varPct <= -10) {
-      alertas.push({ tipo: "warning", icono: "⚠️", texto: `<strong>${mesAct}</strong> bajó <strong>${Math.abs(varPct)}%</strong> respecto a ${mesAnt}.` });
+      alertas.push({ tipo: "warning", icono: "⚠️", texto: currentLang === "en"
+        ? `<strong>${mesAct}</strong> fell <strong>${Math.abs(varPct)}%</strong> compared to ${mesAnt}.`
+        : `<strong>${mesAct}</strong> bajó <strong>${Math.abs(varPct)}%</strong> respecto a ${mesAnt}.` });
     } else if (varPct >= 20) {
-      alertas.push({ tipo: "success", icono: "📈", texto: `Buen mes: <strong>${mesAct}</strong> subió <strong>${varPct}%</strong> respecto a ${mesAnt}.` });
+      alertas.push({ tipo: "success", icono: "📈", texto: currentLang === "en"
+        ? `Great month: <strong>${mesAct}</strong> rose <strong>${varPct}%</strong> compared to ${mesAnt}.`
+        : `Buen mes: <strong>${mesAct}</strong> subió <strong>${varPct}%</strong> respecto a ${mesAnt}.` });
     }
   }
 
@@ -2009,7 +2546,9 @@ function renderAlertasAutomaticas(data) {
       const idxActual  = mesesOrdenados.indexOf(ultimoMes);
 
       if (idxUltimo !== -1 && idxActual - idxUltimo >= 2) {
-        alertas.push({ tipo: "warning", icono: "👤", texto: `<strong>${v}</strong> no registra actividad desde <strong>${ultimoMesVendedor}</strong>.` });
+        alertas.push({ tipo: "warning", icono: "👤", texto: currentLang === "en"
+          ? `<strong>${v}</strong> has had no activity since <strong>${ultimoMesVendedor}</strong>.`
+          : `<strong>${v}</strong> no registra actividad desde <strong>${ultimoMesVendedor}</strong>.` });
       }
     });
   }
@@ -2027,7 +2566,9 @@ function renderAlertasAutomaticas(data) {
       if (anterior >= 5) {
         const variacion = ((actual - anterior) / anterior) * 100;
         if (variacion <= -40) {
-          alertas.push({ tipo: "danger", icono: "📍", texto: `Zona <strong>${z}</strong> cayó <strong>${Math.abs(variacion).toFixed(0)}%</strong> en ${mesActual} (${anterior} → ${actual}).` });
+          alertas.push({ tipo: "danger", icono: "📍", texto: currentLang === "en"
+            ? `Zone <strong>${z}</strong> dropped <strong>${Math.abs(variacion).toFixed(0)}%</strong> in ${mesActual} (${anterior} → ${actual}).`
+            : `Zona <strong>${z}</strong> cayó <strong>${Math.abs(variacion).toFixed(0)}%</strong> en ${mesActual} (${anterior} → ${actual}).` });
         }
       }
     });
@@ -2065,17 +2606,21 @@ function renderEmbudo(data) {
   const totalInstalacion = registros.filter(r => r.tipo === "Instalación").length;
 
   const stages = [
-    { label: "Agenda total", valor: totalAgenda,      color: "#4f46e5" },
-    { label: "Instalación",  valor: totalInstalacion, color: "#10b981" },
+    { label: currentLang === "en" ? "Total schedule" : "Agenda total", valor: totalAgenda,      color: "#4f46e5" },
+    { label: currentLang === "en" ? "Installation"   : "Instalación",  valor: totalInstalacion, color: "#10b981" },
   ];
 
   if (pvSummary) {
     const contactadas = Math.min(pvSummary.contactados, totalInstalacion);
     const pct = totalInstalacion > 0 ? Math.round((contactadas / totalInstalacion) * 100) : 0;
-    stages.push({ label: "Contactadas por postventa", valor: contactadas, color: "#f59e0b" });
-    nota.innerHTML = `📞 De <strong>${totalInstalacion}</strong> instalaciones, <strong>${contactadas}</strong> fueron contactadas para postventa (<strong>${pct}%</strong>).`;
+    stages.push({ label: currentLang === "en" ? "Contacted by after-sales" : "Contactadas por postventa", valor: contactadas, color: "#f59e0b" });
+    nota.innerHTML = currentLang === "en"
+      ? `📞 Out of <strong>${totalInstalacion}</strong> installations, <strong>${contactadas}</strong> were contacted for after-sales (<strong>${pct}%</strong>).`
+      : `📞 De <strong>${totalInstalacion}</strong> instalaciones, <strong>${contactadas}</strong> fueron contactadas para postventa (<strong>${pct}%</strong>).`;
   } else {
-    nota.textContent = "ℹ️ Cargá la solapa Postventa para completar el tercer paso del embudo.";
+    nota.textContent = currentLang === "en"
+      ? "ℹ️ Load the After-sales tab to complete the third step of the funnel."
+      : "ℹ️ Cargá la solapa Postventa para completar el tercer paso del embudo.";
   }
 
   const base = stages[0].valor || 1;
@@ -2088,7 +2633,7 @@ function renderEmbudo(data) {
       const drop = anterior - s.valor;
       const dropPct = anterior > 0 ? Math.round((drop / anterior) * 100) : 0;
       dropHtml = drop > 0
-        ? `<div class="embudo-drop">↓ ${drop} se pierden (${dropPct}%) respecto al paso anterior</div>`
+        ? `<div class="embudo-drop">↓ ${drop} ${currentLang === "en" ? `lost (${dropPct}%) from previous step` : `se pierden (${dropPct}%) respecto al paso anterior`}</div>`
         : "";
     }
     return `
@@ -2096,7 +2641,7 @@ function renderEmbudo(data) {
       <div class="embudo-stage">
         <div class="embudo-stage-header">
           <span class="embudo-stage-label">${s.label}</span>
-          <span><span class="embudo-stage-value">${s.valor}</span><span class="embudo-stage-pct">(${pct}% del total)</span></span>
+          <span><span class="embudo-stage-value">${s.valor}</span><span class="embudo-stage-pct">(${pct}% ${currentLang === "en" ? "of total" : "del total"})</span></span>
         </div>
         <div class="embudo-bar-track">
           <div class="embudo-bar-fill" style="width:${pct}%; background:${s.color};"></div>
